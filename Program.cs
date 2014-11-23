@@ -11,16 +11,18 @@ namespace AISearch
 		public static Random Random;
 		static void Main(string[] args)
 		{
+            //it works.
 			Random = new System.Random();
-			State startState = new State(4, 4, new char[]{
+
+			State startState = new State(4, new char[]{
 				'0', '0', '0', '0',
 				'0', '0', '0', '0',
-				'0', 'D', '0', '0',
+				'0', '0', '0', '0',
 				'A', 'B', 'C', '☺'
 				});
 
-			State endState = new State(4, 4, new char[]{
-				'D', '0', '0', '0',
+			State endState = new State(4, new char[]{
+				'0', '0', '0', '0',
 				'0', 'A', '0', '0',
 				'0', 'B', '0', '0',
 				'0', 'C', '0', '☺'
@@ -28,9 +30,10 @@ namespace AISearch
 
 			for (int i = 0; i < 1; ++i)
 			{
-				Solution sol = SearchMethods.AStar(startState, endState, Heuristics.ManhattanDistance);
+				Solution sol = SearchMethods.BFS(startState, endState);
 				foreach (string str in sol.GetPath())
 					Console.WriteLine(str);
+                Console.ReadLine();
 			}
 			Console.ReadLine();
 		}

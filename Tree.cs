@@ -28,10 +28,7 @@ namespace AISearch
 
 		public int Depth()
 		{
-			if (Parent == null)
-				return 0;
-			else
-				return Parent.Depth() + 1;
+			return (Parent == null) ? 0 : Parent.Depth() + 1;
 		}
 	}
 
@@ -44,6 +41,7 @@ namespace AISearch
 			Root = new Node<T>(root, null);
 		}
 
+        //note: never used due to speed issues, but keeping for legacy reasons
 		public IEnumerable<Node<T>> GetFringe()
 		{
 			//depth first, not that it matters

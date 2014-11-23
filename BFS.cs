@@ -10,23 +10,47 @@ namespace AISearch
 	{
 		public static Solution BFS(State startState, State endState)
 		{
+            Tree<State> tree = new Tree<State>(startState);
+            HashSet<int> closedSet = new HashSet<int>();
+            Queue<Node<State>> workingQueue = new Queue<Node<State>>();
 
-			Queue<State> nodesUnderConsideration = new Queue<State>();
-			HashSet<int> visitedStates = new HashSet<int>();
-			Dictionary<State, State> parents = new Dictionary<State, State>();
+            int expandedNodes = 0;
+            workingQueue.Enqueue(tree.Root);
+
+            while (workingQueue.Count > 0)
+            {
+                Node<State> currentNode = workingQueue.Dequeue();
+                if (currentNode.Data.Grid.SequenceEqual(endState.Grid))
+                    return new Solution(tree.BacktrackFrom(currentNode), expandedNodes);
+
+                if (!closedSet.Contains(currentNode.Data.GetHashCode()))
+                {
+                    //visit this node, then expand it.
+                    closedSet.Add(currentNode.Data.GetHashCode());
+                    expandedNodes++;
+
+                    foreach (State state in currentNode.Data.GetAllMoves().Where(s => !closedSet.Contains(s.GetHashCode())))
+                    {
+                        Node<State> newNode = new Node<State>(state, currentNode);
+                        currentNode.Children.Add(newNode);
+                        workingQueue.Enqueue(newNode);
+                    }
+                }
+            }
+			/*Dictionary<State, State> parents = new Dictionary<State, State>();
 			int expandedNodes = 0;
 
 			//we start at depth 0. we have 1 node to consider before we move down a level. Then, we have 
 			int depth = 0;
 			int nodesUntilNextLevel = 1;
 			int pendingNodesUntilNextLevel = 0;
-			nodesUnderConsideration.Enqueue(startState);
+			workingQueue.Enqueue(startState);
 
-			while (nodesUnderConsideration.Count > 0)
+			while (workingQueue.Count > 0)
 			{
-				State currentState = nodesUnderConsideration.Dequeue();
+				State currentState = workingQueue.Dequeue();
 				expandedNodes++;
-				visitedStates.Add(currentState.GetHashCode());
+				closedSet.Add(currentState.GetHashCode());
 
 				if (currentState.Grid.SequenceEqual(endState.Grid))
 				{
@@ -42,7 +66,7 @@ namespace AISearch
 					return new Solution(path, expandedNodes);
 				}
 
-				IEnumerable<State> nextStates = currentState.GetAllMoves().Where(s => !visitedStates.Contains(s.GetHashCode()));
+				IEnumerable<State> nextStates = currentState.GetAllMoves().Where(s => !closedSet.Contains(s.GetHashCode()));
 
 				//all the children we get are going to count the number of states to consider on the next level.
 				//we've taken a node from this level. if this was the end of this level, then we move down 1 in the tree.
@@ -59,7 +83,7 @@ namespace AISearch
 				foreach (State nextState in nextStates)
 				{
 
-					nodesUnderConsideration.Enqueue(nextState);
+					workingQueue.Enqueue(nextState);
 					//we need to consider the state we moved FROM to backtrace a path. 
 					//since BFS scans from left to right, the first time we encounter some new state A, with a parent B, then all children of A will be expanded BEFORE any
 					//children of A coming from a node with a parent C. So after we find the state, we can ignore it - because if it is part of a path, only the first parent is
@@ -67,7 +91,7 @@ namespace AISearch
 					if(!parents.ContainsKey(nextState))
 						parents.Add(nextState, currentState);
 				}
-			}
+			}*/
 			return new Solution(null, expandedNodes, false);
 		}
 	}

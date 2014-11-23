@@ -39,21 +39,20 @@ namespace AISearch
 
 		public char[] Grid;
 
-		public byte Width, Height;
+        public byte Size;
 
 		public Position AgentLocation
 		{
 			get
 			{
 				int index = Array.FindIndex(Grid, c => c == State.Agent);
-				return new Position { X = (byte)(index % Width), Y = (byte)(index / Height) };
+				return new Position { X = (byte)(index % Size), Y = (byte)(index / Size) };
 			}
 		}
 
-		public State(byte width, byte height, char[] grid)
+		public State(byte size, char[] grid)
 		{
-			Width = width;
-			Height = height;
+            Size = size;
 			Grid = grid;
 		}
 
@@ -62,6 +61,7 @@ namespace AISearch
 			Position agentLocation = this.AgentLocation;
 			Position newAgentLocation = new Position();
 
+            //moves that would take us off the grid are null and ignored
 			switch(direction)
 			{
 				case Direction.Up:
@@ -71,13 +71,13 @@ namespace AISearch
 						newAgentLocation = new Position(agentLocation.X, (byte)(agentLocation.Y - 1));
 					break;
 				case Direction.Down:
-					if (agentLocation.Y == Height - 1)
+					if (agentLocation.Y == Size - 1)
 						return null;
 					else
 						newAgentLocation = new Position(agentLocation.X, (byte)(agentLocation.Y + 1));
 					break;
 				case Direction.Right:
-					if (agentLocation.X == Width - 1)
+					if (agentLocation.X == Size - 1)
 						return null;
 					else
 						newAgentLocation = new Position((byte)(agentLocation.X + 1), agentLocation.Y);
@@ -91,10 +91,10 @@ namespace AISearch
 			}
 
 			char[] newGrid = (char[])Grid.Clone();
-			char displacedSymbol = newGrid[newAgentLocation.Y * Width + newAgentLocation.X];
-			newGrid[agentLocation.Y * Width + agentLocation.X] = displacedSymbol;
-			newGrid[newAgentLocation.Y * Width + newAgentLocation.X] = State.Agent;
-			State newState = new State(Width, Height, newGrid);
+			char displacedSymbol = newGrid[newAgentLocation.Y * Size + newAgentLocation.X];
+			newGrid[agentLocation.Y * Size + agentLocation.X] = displacedSymbol;
+			newGrid[newAgentLocation.Y * Size + newAgentLocation.X] = State.Agent;
+			State newState = new State(Size, newGrid);
 			return newState;
 		}
 
@@ -116,9 +116,9 @@ namespace AISearch
 		public override string ToString()
 		{
 			StringBuilder builder = new StringBuilder();
-			for (int y = 0; y < Height; ++y)
+			for (int y = 0; y < Size; ++y)
 			{
-				builder.Append(String.Join(" ", Grid.Skip(y * Width).Take(Width)));
+				builder.Append(String.Join(" ", Grid.Skip(y * Size).Take(Size)));
 				builder.Append("\n");
 			}
 			return builder.ToString();

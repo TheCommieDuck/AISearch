@@ -13,12 +13,14 @@ namespace AISearch
 			Solution foundSolution = null;
 			int expandedNodes = 0;
 			int depthLimit = 0;
+
 			while (foundSolution == null || !foundSolution.WasSuccess)
 			{
 				foundSolution = SearchMethods.DFS(startState, endState, depthLimit, heuristic);
 				expandedNodes += foundSolution.ExpandedNodes;
 				depthLimit++;
 			}
+
 			return new Solution(foundSolution.SolutionPath, expandedNodes);
 		}
 	}
